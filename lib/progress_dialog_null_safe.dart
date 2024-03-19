@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 enum ProgressDialogType { normal, download }
 
 String _dialogMessage = "Loading...";
-double _progress = 0.0, _maxProgress = 96.0;
+double _progress = 0.0,
+    _maxProgress = 96.0;
 
 Widget? _customBody;
 Widget? _widgetAboveTheDialog;
@@ -18,7 +19,8 @@ TextDirection _direction = TextDirection.ltr;
 bool _isShowing = false;
 late BuildContext _context, _dismissingContext;
 ProgressDialogType? _progressDialogType;
-bool _barrierDismissible = true, _showLogs = false;
+bool _barrierDismissible = true,
+    _showLogs = false;
 
 TextStyle _progressTextStyle = const TextStyle(
   color: Colors.black,
@@ -31,7 +33,8 @@ TextStyle _messageStyle = const TextStyle(
   fontWeight: FontWeight.w600,
 );
 
-double _dialogElevation = 8.0, _borderRadius = 8.0;
+double _dialogElevation = 8.0,
+    _borderRadius = 8.0;
 Color _backgroundColor = Colors.white;
 Curve _insetAnimCurve = Curves.easeInOut;
 EdgeInsets _dialogPadding = const EdgeInsets.all(8.0);
@@ -47,8 +50,7 @@ final GlobalKey<_DialogBodyState> dialogBodyKey = GlobalKey<_DialogBodyState>();
 class ProgressDialog {
   _DialogBody? _dialog;
 
-  ProgressDialog(
-    BuildContext context, {
+  ProgressDialog(BuildContext context, {
     ProgressDialogType? type,
     bool? isDismissible,
     bool? showLogs,
@@ -170,12 +172,10 @@ class ProgressDialog {
         showDialog<dynamic>(
           context: _context,
           barrierDismissible: _barrierDismissible,
-          builder: (
-            BuildContext buildContext,
-          ) {
+          builder: (BuildContext buildContext,) {
             _dismissingContext = buildContext;
-            return PopScope(
-              canPop: _barrierDismissible,
+            return WillPopScope(
+              onWillPop: () async => _barrierDismissible,
               child: Dialog(
                 backgroundColor: _backgroundColor,
                 insetAnimationCurve: _insetAnimCurve,
@@ -214,7 +214,7 @@ class ProgressDialog {
 }
 
 class _DialogBody extends StatefulWidget {
-  const _DialogBody({super.key});
+  const _DialogBody({Key? key}) : super(key: key);
 
   void update() => dialogBodyKey.currentState?.update();
 
@@ -235,9 +235,7 @@ class _DialogBodyState extends State<_DialogBody> {
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context,) {
     final loader = Align(
       alignment: _progressWidgetAlignment,
       child: SizedBox(
@@ -342,10 +340,11 @@ extension ProgressDialogExceptionTypeExtension on ProgressDialogExceptionType {
 class ProgressDialogException implements Exception {
   ProgressDialogExceptionType type;
   String? message;
-  ProgressDialogException(
-    this.type, [
+
+  ProgressDialogException(this.type, [
     this.message,
   ]);
+
   @override
   String toString() {
     if (message == null) return "DialogException";
